@@ -7,7 +7,7 @@ import cookieParser from 'cookie-parser';
 import express from 'express';
 import cors from 'cors';
 import env from '@/config/env';
-import TestRouter from  "@/routes/test"
+import SyncRouter from  "@/routes/sync"
 
 const app = express();
 
@@ -31,7 +31,7 @@ app.use(
 
 app.use(LogContextMiddleware);
 
-app.use(`${API_PREFIX}/test`, TestRouter);
+app.use(`${API_PREFIX}/sync`, SyncRouter);
 
 app.use(errorHandler);
 

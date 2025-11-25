@@ -1,0 +1,158 @@
+inline_model_114 {
+appraisal (NewAppraisalInput, optional)
+}
+NewAppraisalInput {
+type (string, optional),
+method (string, optional),
+appraisalDate (string, optional),
+source (string, optional),
+classification (string, optional),
+conductedFor (string, optional),
+reason (string, optional),
+motivationDetail (string, optional),
+comments (string, optional),
+salePrice (inline_model_56, optional),
+rentPrice (inline_model_57, optional),
+externalId (string, optional),
+displayPrice (string, optional),
+property (AppraisalProperty, optional),
+attachedRelatedStaffMembers (Array[AttachedRelatedStaffMember], optional),
+attachedRelatedContacts (Array[AttachedRelatedContact], optional),
+externalLinks (Array[ExternalLink], optional),
+grossCommissionFeeStructure (GrossCommissionFeeStructure, optional),
+tenancyDetails (TenancyDetails, optional),
+lastSoldDate (string, optional),
+lastSoldPrice (string, optional),
+lastLeasedDate (string, optional),
+lastLeasedPrice (inline_model_58, optional)
+}
+inline_model_56 {
+value (string, optional),
+rangeFrom (string, optional),
+rangeTo (string, optional)
+}
+inline_model_57 {
+value (string, optional),
+rangeFrom (string, optional),
+rangeTo (string, optional),
+period (string, optional)
+}
+AppraisalProperty {
+type (string, optional),
+category (string, optional),
+name (string, optional),
+address (inline_model_95, optional),
+location (inline_model_96, optional),
+bedrooms (integer, optional),
+bathrooms (integer, optional),
+garages (integer, optional),
+carPorts (integer, optional),
+carSpaces (integer, optional),
+loungeRooms (integer, optional),
+toilets (integer, optional),
+studies (integer, optional),
+pools (integer, optional),
+landArea (Area, optional),
+buildingArea (Area, optional),
+externalArea (Area, optional),
+frontage (inline_model_97, optional),
+warehouseArea (Area, optional),
+officeArea (Area, optional),
+showroomArea (Area, optional),
+retailArea (Area, optional),
+mezzanineArea (Area, optional),
+otherArea (Area, optional),
+aspect (string, optional),
+yearBuilt (number, optional),
+yearRenovated (number, optional),
+construction (string, optional),
+condition (string, optional) = ['Brand New', 'Original', 'Partly Renovated', 'Fully Renovated', 'Near New', 'Dated', 'Fair', 'Good'],
+energyRating (string, optional) = ['0.0', '1.0', '1.5', '2.0', '2.5', '3.0', '3.5', '4.0', '4.5', '5.0', '5.5', '6.0', '6.5', '7.0', '7.5', '8.0', '8.5', '9.0', '9.5', '10.0'],
+legalDetails (LegalDetails, optional),
+features (Array[string], optional)
+}
+AttachedRelatedStaffMember {
+webDisplay (boolean, optional),
+displayOrder (integer, optional),
+role (string, optional),
+staffMember (inline_model_102, optional)
+}
+AttachedRelatedContact {
+role (string, optional),
+contact (inline_model_103, optional)
+}
+ExternalLink {
+type (string, optional),
+title (string, optional),
+url (string, optional),
+order (integer, optional)
+}
+GrossCommissionFeeStructure {
+type (string, optional),
+incGST (boolean, optional),
+rate (number, optional),
+scale (Array[inline_model_92], optional)
+}
+TenancyDetails {
+tenanted (boolean, optional),
+tenancyDetail (string, optional),
+leaseTerm (string, optional),
+optionPeriod (string, optional),
+leaseStartDate (string, optional),
+leaseEndDate (string, optional),
+rent (inline_model_94, optional)
+}
+inline_model_58 {
+value (string, optional),
+period (string, optional)
+}
+inline_model_95 {
+levelNum (string, optional),
+lotNum (string, optional),
+unitNum (string, optional),
+streetNum (string, optional),
+streetName (string, optional),
+streetType (string, optional),
+suburb (string, optional),
+state (string, optional),
+postcode (string, optional),
+country (string, optional),
+customStreetAddress (string, optional)
+}
+inline_model_96 {
+lat (string, optional),
+long (string, optional)
+}
+Area {
+value (number, optional),
+unit (string, optional)
+}
+inline_model_97 {
+value (number, optional),
+unit (string, optional)
+}
+LegalDetails {
+legalDescription (string, optional),
+lot (string, optional),
+depositedPlan (string, optional),
+volume (string, optional),
+folio (string, optional),
+block (string, optional),
+section (string, optional),
+zoning (string, optional)
+}
+inline_model_102 {
+id (string, optional)
+}
+inline_model_103 {
+id (string, optional)
+}
+inline_model_92 {
+type (string, optional),
+rate (number, optional),
+priceTo (number, optional)
+}
+inline_model_94 {
+value (number, optional),
+period (string, optional) = ['week', 'month', 'year']
+}

@@ -6,6 +6,10 @@ const envSchema = z.object({
   PORT: z.string().default('8000'),
   NODE_ENV: z.enum(['development', 'production', 'test']).default('development'),
   FRONTEND_URL: z.url().default('http://localhost:3000'),
+  AIRTABLE_API_KEY: z.string(),
+  AGENTBOX_API_KEY: z.string(),
+  AGENTBOX_CLIENT_ID: z.string(),
+	API_CODE: z.string().default('supersecretcode123'),
 });
 
 export default envSchema.parse(process.env as z.infer<typeof envSchema>);

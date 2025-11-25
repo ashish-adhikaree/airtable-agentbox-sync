@@ -72,7 +72,7 @@ export function validateQueryParams(schema: z.ZodType) {
 
 export function validateId(key: string = 'id') {
   const schema = z.object({
-    [key]: z.uuid(),
+    [key]: z.string(),
   });
   return validateParams(schema);
 }
