@@ -38,3 +38,4 @@ app.use(errorHandler);
 app.listen(env.PORT, async () => {
 	systemLogger.info(`Server is running on http://localhost:${env.PORT}`)
 });
+

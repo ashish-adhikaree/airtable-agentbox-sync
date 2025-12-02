@@ -3,7 +3,7 @@ import { syncRecords } from '@/db/schema';
 import { backOff } from 'exponential-backoff';
 import logger from '@/lib/utils/logger';
 import { SYNC_RECORD_STATUS } from '../constants';
-import { eq } from 'drizzle-orm'
+import { eq } from 'drizzle-orm';
 
 async function addSyncRecord(record: { tableName: string; recordId: string; status?: string }) {
   const log = logger({ service: 'SyncRecordsHelper', method: 'addSyncRecord', meta: { record } });
@@ -26,7 +26,7 @@ async function addSyncRecord(record: { tableName: string; recordId: string; stat
   }
 }
 
-async function updateSyncRecordStatus({recordId, status}:{recordId: string, status: string}) {
+async function updateSyncRecordStatus({ recordId, status }: { recordId: string; status: string }) {
   const log = logger({ service: 'SyncRecordsHelper', method: 'updateSyncRecordStatus', meta: { recordId, status } });
   log.info(`Updating sync record ID ${recordId} to status ${status}`);
   try {
@@ -47,9 +47,28 @@ async function updateSyncRecordStatus({recordId, status}:{recordId: string, stat
   }
 }
 
+async function getSyncRecordById(recordId: string) {
+  const log = logger({ service: 'SyncRecordsHelper', method: 'getSyncRecordById', meta: { recordId } });
+  log.info(`Fetching sync record with ID ${recordId}`);
+  try {
+    const record = await db
+      .select()
+      .from(syncRecords)
+      .where(eq(syncRecords.recordId, recordId))
+      .limit(1)
+      .then((results) => results[0] || null);
+    return record;
+  } catch (err: any) {
+    err.location = { service: 'SyncRecordsHelper', method: 'getSyncRecordById' };
+    err.meta = { recordId };
+    throw err;
+  }
+}
+
 const SyncRecordsHelper = {
   addSyncRecord,
   updateSyncRecordStatus,
+  getSyncRecordById,
 };
 
 export default SyncRecordsHelper;

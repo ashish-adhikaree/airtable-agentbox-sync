@@ -1,7 +1,7 @@
 export const API_PREFIX = `/api/v1`;
 export const BASE_ID = 'appFrtd29lEAr1MCp';
 export const AIRTABLE_TABLES = {
-  APPRAISALS: 'Appraisals',
+  APPRAISALS: 'Appraisal',
 };
 
 export const SYNC_RECORD_STATUS = {
@@ -9,3 +9,6 @@ export const SYNC_RECORD_STATUS = {
   COMPLETED: 'completed',
   FAILED: 'failed',
 };
+
+export const AGENTBOX_API_URL="https://api.agentboxcrm.com.au"
+export const AGENTBOX_API_VERSION=2

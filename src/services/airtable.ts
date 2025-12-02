@@ -12,6 +12,7 @@ async function getAirtableRecord(tableName: string, recordId: string) {
     const record = await base(tableName).find(recordId);
     return record;
   } catch (err: any) {
+		console.error(err);
     err.location = { service: 'AirtableService', method: 'getAirtableRecord' };
     err.meta = { tableName, recordId };
     throw err;
