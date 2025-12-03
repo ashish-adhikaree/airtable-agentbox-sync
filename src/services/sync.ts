@@ -13,11 +13,15 @@ async function syncAppraisal(id: string) {
     if (existingRecord) {
       if (existingRecord.status === SYNC_RECORD_STATUS.COMPLETED) {
         log.info(`Appraisal with ID ${id} has already been synced successfully. Skipping.`);
-        return;
+        return {
+          message: 'Appraisal already synced',
+        };
       }
       if (existingRecord.status === SYNC_RECORD_STATUS.IN_PROGRESS) {
         log.info(`Appraisal with ID ${id} is already in progress. Skipping.`);
-        return;
+        return {
+          message: 'Appraisal sync in progress',
+        };
       }
     } else {
       await SyncRecordsHelper.addSyncRecord({ tableName: 'Appraisal', recordId: id });
@@ -27,7 +31,6 @@ async function syncAppraisal(id: string) {
 
     const mappedAppraisal = await airtableToAgentboxAppraisal(record._rawJson);
 
-    console.log(mappedAppraisal.appraisal.property.address, 'mappedAppraisal');
     const { data } = await agentboxClient.post('/appraisals', mappedAppraisal);
     await SyncRecordsHelper.updateSyncRecordStatus({ recordId: id, status: SYNC_RECORD_STATUS.COMPLETED });
 
@@ -36,7 +39,12 @@ async function syncAppraisal(id: string) {
       status: 'synced',
     };
   } catch (err: any) {
-    await SyncRecordsHelper.updateSyncRecordStatus({ recordId: id, status: SYNC_RECORD_STATUS.FAILED });
+    let errorMessage = err.message || 'Unknown error';
+    const errors = err.response?.data?.response?.errors;
+    if (errors && Array.isArray(errors)) {
+      errorMessage = errors.map((e: any) => e.detail).join('\n');
+    }
+    await SyncRecordsHelper.updateSyncRecordStatus({ recordId: id, status: SYNC_RECORD_STATUS.FAILED, errorMessage });
     err.location = { service: 'SyncService', method: 'syncAppraisal' };
     err.meta = { id };
     throw err;

@@ -6,7 +6,7 @@ export const syncRecords = sqliteTable('sync_records', {
   tableName: text('table_name').notNull(),
   recordId: text('record_id').notNull().unique(),
   status: text('status').notNull(),
-
+	errorMessage: text('error_message'),
   createdAt: text('created_at')
     .notNull()
     .default(sql`CURRENT_TIMESTAMP`),
