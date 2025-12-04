@@ -1,0 +1,1 @@
+ALTER TABLE `sync_records` ADD `agentbox_listing_id` text;

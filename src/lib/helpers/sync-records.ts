@@ -26,7 +26,17 @@ async function addSyncRecord(record: { tableName: string; recordId: string; stat
   }
 }
 
-async function updateSyncRecordStatus({ recordId, status, errorMessage }: { recordId: string; status: string, errorMessage?: string }) {
+async function updateSyncRecordStatus({
+  recordId,
+  status,
+  errorMessage,
+  agentboxListingId,
+}: {
+  recordId: string;
+  status: string;
+  errorMessage?: string;
+  agentboxListingId?: string;
+}) {
   const log = logger({ service: 'SyncRecordsHelper', method: 'updateSyncRecordStatus', meta: { recordId, status } });
   log.info(`Updating sync record ID ${recordId} to status ${status}`);
   try {
@@ -36,7 +46,8 @@ async function updateSyncRecordStatus({ recordId, status, errorMessage }: { reco
         .set({
           status: status,
           updatedAt: new Date().toISOString(),
-					errorMessage: errorMessage || null,
+          errorMessage: errorMessage || null,
+          agentboxListingId: agentboxListingId || null,
         })
         .where(eq(syncRecords.recordId, recordId));
     });

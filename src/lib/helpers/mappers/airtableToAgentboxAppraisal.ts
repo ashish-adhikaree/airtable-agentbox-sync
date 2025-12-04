@@ -34,7 +34,7 @@ type AirtableRecord = {
     'For Sale/Rental': 'Sale' | 'Lease';
     'Email (from Lead Agent)'?: string[];
     'Email (from 2nd Agent)'?: string[];
-		'Postcode': string
+    Postcode: string;
   };
 };
 
@@ -196,7 +196,7 @@ export async function airtableToAgentboxAppraisal(record: AirtableRecord) {
             country: 'Australia',
             customStreetAddress: fields['Street Address'],
             streetName: fields['Street Address'],
-						// postcode: fields['Postcode'],
+            postcode: fields['Postcode'],
             ...(fields['Level No.'] ? { levelNum: fields['Level No.'] } : {}),
             ...(fields['Unit No.'] ? { unitNum: fields['Unit No.'] } : {}),
             ...(fields['Street No.'] ? { streetNum: fields['Street No.'] } : {}),

@@ -5,8 +5,9 @@ export const syncRecords = sqliteTable('sync_records', {
   id: integer('id').primaryKey(),
   tableName: text('table_name').notNull(),
   recordId: text('record_id').notNull().unique(),
+  agentboxListingId: text('agentbox_listing_id'),
   status: text('status').notNull(),
-	errorMessage: text('error_message'),
+  errorMessage: text('error_message'),
   createdAt: text('created_at')
     .notNull()
     .default(sql`CURRENT_TIMESTAMP`),

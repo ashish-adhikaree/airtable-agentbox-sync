@@ -17,6 +17,7 @@
   "dependencies": {
     "airtable": "^0.12.2",
     "axios": "^1.13.2",
+    "bcrypt": "^6.0.0",
     "better-sqlite3": "^12.4.6",
     "cls-hooked": "^4.2.2",
     "cookie-parser": "^1.4.7",
@@ -33,6 +34,7 @@
     "zod": "^4.1.13"
   },
   "devDependencies": {
+    "@types/bcrypt": "^6.0.0",
     "@types/better-sqlite3": "^7.6.13",
     "@types/cls-hooked": "^4.3.9",
     "@types/cookie-parser": "^1.4.10",

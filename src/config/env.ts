@@ -9,7 +9,7 @@ const envSchema = z.object({
   AIRTABLE_API_KEY: z.string(),
   AGENTBOX_API_KEY: z.string(),
   AGENTBOX_CLIENT_ID: z.string(),
-	API_CODE: z.string().default('supersecretcode123'),
+  ACCESS_TOKEN_HASH: z.string(),
 });
 
 export default envSchema.parse(process.env as z.infer<typeof envSchema>);

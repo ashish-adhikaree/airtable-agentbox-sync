@@ -32,7 +32,11 @@ async function syncAppraisal(id: string) {
     const mappedAppraisal = await airtableToAgentboxAppraisal(record._rawJson);
 
     const { data } = await agentboxClient.post('/appraisals', mappedAppraisal);
-    await SyncRecordsHelper.updateSyncRecordStatus({ recordId: id, status: SYNC_RECORD_STATUS.COMPLETED });
+    await SyncRecordsHelper.updateSyncRecordStatus({
+      recordId: id,
+      status: SYNC_RECORD_STATUS.COMPLETED,
+      agentboxListingId: data.response.appraisal.id,
+    });
 
     return {
       appraisalId: data.response.appraisal.id,
