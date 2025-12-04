@@ -32,6 +32,10 @@ app.use(
 
 app.use(LogContextMiddleware);
 
+app.get(`${API_PREFIX}/health`, (req, res) => {
+  res.json({ status: 'ok' });
+});
+
 app.use(`${API_PREFIX}/sync`, isAuthorised, SyncRouter);
 
 app.use(errorHandler);
