@@ -203,7 +203,7 @@ export async function airtableToAgentboxAppraisal(record: AirtableRecord) {
           },
           bedrooms: parseInt(fields.Bed, 10),
           bathrooms: parseInt(fields.Bath, 10),
-          garages: parseInt(fields.Car, 10),
+          carSpaces: parseInt(fields.Car, 10),
           landArea: {
             value: parseInt(fields['Land Size'], 10),
             unit: 'sqm',
