@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "dev": "tsx watch --watch src src/index.ts",
-    "build": "tsc src/index.ts",
+    "start": "tsx src/index.ts",
     "db:migrate": "drizzle-kit migrate --config ./src/db/drizzle.config.ts",
     "db:generate": "drizzle-kit generate --config ./src/db/drizzle.config.ts",
     "db:studio": "drizzle-kit studio --config ./src/db/drizzle.config.ts"
