@@ -56,6 +56,8 @@ async function createVendor({
     return null;
   }
 
+  mobile = mobile ? mobile.replace(/\D/g, '') : undefined;
+
   if (mobile && mobile.length < 10) {
     log.warn('Mobile number is too short, skipping mobile field');
     mobile = undefined;
