@@ -12,9 +12,9 @@ type AirtableRecord = {
     Suburb: string;
     Office: string;
     'Property Type': string;
-    'Mobile number'?: string;
-    'First and Last Name': string;
-    'Email address': string;
+    Mobile?: string;
+    'First Name': string;
+    Email: string;
     'Last Name': string;
     'First Name - 2nd Vendor'?: string;
     'Vendor 2 Last Name'?: string;
@@ -58,6 +58,7 @@ async function createVendor({
 
   mobile = mobile ? mobile.replace(/\D/g, '') : undefined;
 
+
   if (mobile && mobile.length < 10) {
     log.warn('Mobile number is too short, skipping mobile field');
     mobile = undefined;
@@ -72,6 +73,7 @@ async function createVendor({
       type: 'Person',
     },
   });
+
 
   return newVendor.data.response.contact.id;
 }
@@ -122,27 +124,27 @@ export async function airtableToAgentboxAppraisal(record: AirtableRecord) {
     let vendor1 = null;
     let vendor2 = null;
 
-    if (fields['Email address']) {
+    if (fields['Email']) {
       log.info('Fetching vendor 1 from AgentBox');
       const vendor1InAb = (
         await agentboxClient.get('/contacts', {
           params: {
             limit: 1,
-            'filter[email]': fields['Email address'],
+            'filter[email]': fields['Email'],
           },
         })
       )?.data?.response?.contacts?.[0];
       if (vendor1InAb?.id) {
         vendor1 = vendor1InAb.id;
       } else {
-        log.info(`Vendor with email ${fields['Email address']} not found in AgentBox`);
+        log.info(`Vendor with email ${fields['Email']} not found in AgentBox`);
         log.info('Creating new contact for vendor 1 in AgentBox');
 
         vendor1 = await createVendor({
-          email: fields['Email address'],
-          firstName: fields['First and Last Name'],
+          email: fields['Email'],
+          firstName: fields['First Name'],
           lastName: fields['Last Name'],
-          mobile: fields['Mobile number'],
+          mobile: fields['Mobile'],
           log,
         });
 
