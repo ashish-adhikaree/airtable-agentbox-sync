@@ -206,7 +206,6 @@ export async function airtableToAgentboxAppraisal(record: AirtableRecord) {
             suburb: fields.Suburb,
             state: fields.State,
             country: 'Australia',
-            customStreetAddress: fields['Street Address'],
             streetName: fields['Street Address'],
             postcode: fields['Postcode'],
             ...(fields['Level No.'] ? { levelNum: fields['Level No.'] } : {}),
