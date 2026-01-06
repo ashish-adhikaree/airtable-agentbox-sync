@@ -35,6 +35,8 @@ type AirtableRecord = {
     'Email (from Lead Agent)'?: string[];
     'Email (from 2nd Agent)'?: string[];
     Postcode: string;
+    'Price From ($)'?: number;
+    'Price To ($)'?: number;
   };
 };
 
@@ -58,7 +60,6 @@ async function createVendor({
 
   mobile = mobile ? mobile.replace(/\D/g, '') : undefined;
 
-
   if (mobile && mobile.length < 10) {
     log.warn('Mobile number is too short, skipping mobile field');
     mobile = undefined;
@@ -73,7 +74,6 @@ async function createVendor({
       type: 'Person',
     },
   });
-
 
   return newVendor.data.response.contact.id;
 }
@@ -191,6 +191,14 @@ export async function airtableToAgentboxAppraisal(record: AirtableRecord) {
         source: fields['Appraisal Source'],
         externalId: record.id,
         type: fields['For Sale/Rental'] === 'Sale' ? 'sale' : 'lease',
+        ...(fields['Price From ($)'] || fields['Price To ($)']
+          ? {
+              salePrice: {
+                rangeFrom: fields['Price From ($)'],
+                rangeTo: fields['Price To ($)'],
+              },
+            }
+          : {}),
         property: {
           category: fields['Property Type'],
           type: fields.Type,
