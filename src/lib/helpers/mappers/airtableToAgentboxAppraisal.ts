@@ -220,7 +220,7 @@ export async function airtableToAgentboxAppraisal(record: AirtableRecord) {
             unit: 'sqm',
           },
         },
-        ...(officeId ? { office: { id: officeId } } : {}),
+        ...(officeId ? { officeId } : {}),
         ...(filteredAgents.length > 0
           ? {
               attachedRelatedStaffMembers: filteredAgents.map((agent: any, index: number) => ({
