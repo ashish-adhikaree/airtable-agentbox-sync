@@ -60,15 +60,23 @@ type AirtableRecord = {
   };
 };
 
-export async function attachDocumentToAppraisal(appraisalId: string, documentUrl: string, log: ReturnType<typeof logger>) {
+export async function attachDocumentToAppraisal(
+  appraisalId: string,
+  documentUrl: string,
+  title: string,
+  log: ReturnType<typeof logger>
+) {
   try {
     log.info(`Attaching document to appraisal ID ${appraisalId} from URL ${documentUrl}`);
     await agentboxClient.post(`/listing-documents`, {
-      sourceUrl: documentUrl,
-      attachedListing: {
-        id: appraisalId,
+      listingDocument: {
+        sourceUrl: documentUrl,
+        attachedListing: {
+          id: appraisalId,
+        },
+        type: 'General Docs',
+        customTitle: title,
       },
-      type: 'General Docs',
     });
     return true;
   } catch (error) {

@@ -31,6 +31,7 @@ async function syncAppraisal(id: string) {
     }
 
     const record = await AirtableService.getAirtableRecord('Appraisal', id);
+
     const mappedAppraisal = await airtableToAgentboxAppraisal(record._rawJson);
 
     const { data } = await agentboxClient.post('/appraisals', mappedAppraisal);
@@ -45,7 +46,7 @@ async function syncAppraisal(id: string) {
       Array.isArray(record.fields['Please attach your CMA report'])
     ) {
       for (const file of record.fields['Please attach your CMA report']) {
-        await attachDocumentToAppraisal(data.response.appraisal.id, file.url, log);
+        await attachDocumentToAppraisal(data.response.appraisal.id, file.url, file.filename ?? 'CMA Report', log);
       }
     }
 
