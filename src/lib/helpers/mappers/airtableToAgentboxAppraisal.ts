@@ -2,6 +2,7 @@ import { format } from 'date-fns/format';
 import getCachedData from '../get-cached-data';
 import agentboxClient from '@/lib/utils/agentbox-client';
 import logger from '@/lib/utils/logger';
+import { AIRTABLE_TABLE_IDS, BASE_ID } from '@/lib/constants';
 
 type AirtableRecord = {
   id: string;
@@ -37,8 +38,44 @@ type AirtableRecord = {
     Postcode: string;
     'Price From ($)'?: number;
     'Price To ($)'?: number;
+    'Please attach your CMA report'?: {
+      id: string;
+      url: string;
+      filename: string;
+      size: number;
+      type: string;
+      thumbnails: {
+        small: {
+          url: string;
+          width: number;
+          height: number;
+        };
+        large: {
+          url: string;
+          width: number;
+          height: number;
+        };
+      };
+    }[];
   };
 };
+
+export async function attachDocumentToAppraisal(appraisalId: string, documentUrl: string, log: ReturnType<typeof logger>) {
+  try {
+    log.info(`Attaching document to appraisal ID ${appraisalId} from URL ${documentUrl}`);
+    await agentboxClient.post(`/listing-documents`, {
+      sourceUrl: documentUrl,
+      attachedListing: {
+        id: appraisalId,
+      },
+      type: 'General Docs',
+    });
+    return true;
+  } catch (error) {
+    log.error(`Failed to attach document to appraisal ID ${appraisalId}: ${error}`);
+    return false;
+  }
+}
 
 async function createVendor({
   email,
@@ -220,6 +257,14 @@ export async function airtableToAgentboxAppraisal(record: AirtableRecord) {
             unit: 'sqm',
           },
         },
+        externalLinks: [
+          {
+            type: 'General External Link',
+            title: 'Airtable Record',
+            url: `https://airtable.com/${BASE_ID}/${AIRTABLE_TABLE_IDS.APPRAISALS}/${record.id}`,
+            order: 1,
+          },
+        ],
         ...(officeId ? { officeId } : {}),
         ...(filteredAgents.length > 0
           ? {

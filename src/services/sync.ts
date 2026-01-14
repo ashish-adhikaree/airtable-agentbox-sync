@@ -2,7 +2,10 @@ import logger from '@/lib/utils/logger';
 import AirtableService from './airtable';
 import SyncRecordsHelper from '@/lib/helpers/sync-records';
 import { SYNC_RECORD_STATUS } from '@/lib/constants';
-import { airtableToAgentboxAppraisal } from '@/lib/helpers/mappers/airtableToAgentboxAppraisal';
+import {
+  airtableToAgentboxAppraisal,
+  attachDocumentToAppraisal,
+} from '@/lib/helpers/mappers/airtableToAgentboxAppraisal';
 import agentboxClient from '@/lib/utils/agentbox-client';
 
 async function syncAppraisal(id: string) {
@@ -28,7 +31,6 @@ async function syncAppraisal(id: string) {
     }
 
     const record = await AirtableService.getAirtableRecord('Appraisal', id);
-
     const mappedAppraisal = await airtableToAgentboxAppraisal(record._rawJson);
 
     const { data } = await agentboxClient.post('/appraisals', mappedAppraisal);
@@ -37,6 +39,15 @@ async function syncAppraisal(id: string) {
       status: SYNC_RECORD_STATUS.COMPLETED,
       agentboxListingId: data.response.appraisal.id,
     });
+
+    if (
+      record.fields['Please attach your CMA report'] &&
+      Array.isArray(record.fields['Please attach your CMA report'])
+    ) {
+      for (const file of record.fields['Please attach your CMA report']) {
+        await attachDocumentToAppraisal(data.response.appraisal.id, file.url, log);
+      }
+    }
 
     return {
       appraisalId: data.response.appraisal.id,
