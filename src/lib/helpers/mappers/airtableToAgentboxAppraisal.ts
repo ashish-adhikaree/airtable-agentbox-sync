@@ -64,7 +64,8 @@ export async function attachDocumentToAppraisal(
   appraisalId: string,
   documentUrl: string,
   title: string,
-  log: ReturnType<typeof logger>
+  log: ReturnType<typeof logger>,
+	type: string,
 ) {
   try {
     log.info(`Attaching document to appraisal ID ${appraisalId} from URL ${documentUrl}`);
@@ -74,7 +75,7 @@ export async function attachDocumentToAppraisal(
         attachedListing: {
           id: appraisalId,
         },
-        type: 'General Docs',
+        type: type,
         customTitle: title,
       },
     });

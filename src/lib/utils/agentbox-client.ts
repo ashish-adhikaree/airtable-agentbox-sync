@@ -11,6 +11,7 @@ const agentboxClient = axios.create({
     'X-API-Key': env.AGENTBOX_API_KEY,
     'X-Client-ID': env.AGENTBOX_CLIENT_ID,
   },
+  timeout: 10000, //10s
 });
 
 export default agentboxClient;

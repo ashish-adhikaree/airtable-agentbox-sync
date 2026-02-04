@@ -7,6 +7,7 @@ import {
   attachDocumentToAppraisal,
 } from '@/lib/helpers/mappers/airtableToAgentboxAppraisal';
 import agentboxClient from '@/lib/utils/agentbox-client';
+import { file } from 'zod';
 
 async function syncAppraisal(id: string) {
   const log = logger({ service: 'SyncService', method: 'syncAppraisal', meta: { id } });
@@ -46,7 +47,13 @@ async function syncAppraisal(id: string) {
       Array.isArray(record.fields['Please attach your CMA report'])
     ) {
       for (const file of record.fields['Please attach your CMA report']) {
-        await attachDocumentToAppraisal(data.response.appraisal.id, file.url, file.filename ?? 'CMA Report', log);
+        await attachDocumentToAppraisal(
+          data.response.appraisal.id,
+          file.url,
+          file.filename ?? 'CMA Report',
+          log,
+          'General Docs'
+        );
       }
     }
 
@@ -67,8 +74,77 @@ async function syncAppraisal(id: string) {
   }
 }
 
+async function syncListingDocuments(listingId: string) {
+  const log = logger({ service: 'SyncService', method: 'syncListingDocuments', meta: { listingId } });
+  log.info(`Syncing listing documents for Listing ID ${listingId}`);
+  try {
+    const record = await AirtableService.getAirtableRecord('Listing', listingId);
+
+    log.info(`Fetched Airtable record for Listing ID ${listingId}`);
+
+    const linkedAppraisalId = (record.fields['Linked Appraisal'] as any)?.[0];
+    log.info(`Linked Appraisal ID for Listing ID ${listingId}: ${linkedAppraisalId}`);
+    if (!linkedAppraisalId) {
+      throw new Error('Linked Appraisal ID is missing in the Airtable record');
+    }
+
+    log.info(`Searching Agentbox listings for Linked Appraisal ID: ${linkedAppraisalId}`);
+    const agentboxListings = await agentboxClient.get(`/listings`, {
+      params: {
+        'filter[query]': linkedAppraisalId,
+        limit: 1,
+      },
+    });
+
+    const matchedAgentBoxListing = agentboxListings.data.response?.listings?.[0];
+
+    if (!matchedAgentBoxListing) {
+      throw new Error(`No matching Agentbox listing found for Linked Appraisal ID: ${linkedAppraisalId}`);
+    }
+
+    if (matchedAgentBoxListing.externalId !== linkedAppraisalId) {
+      throw new Error(`Mismatch between Linked Appraisal ID and Agentbox listing external ID`);
+    }
+
+    const agentboxListingId = matchedAgentBoxListing.id;
+
+    log.info(`Matched Agentbox listing for Linked Appraisal ID ${linkedAppraisalId}: ${agentboxListingId}`);
+
+    const agencyAgreement = record.fields['Agency Agreement'];
+    const cmaDocuments = record.fields['CMA'];
+    const authorisingDocument = record.fields['Authorising Document'];
+
+    await Promise.all(
+      [
+        { key: 'Agency Agreement', fallbackTitle: 'Agency Agreement', files: agencyAgreement },
+        { key: 'General Docs', fallbackTitle: 'CMA Document', files: cmaDocuments },
+        { key: 'General Docs', fallbackTitle: 'Authorising Document', files: authorisingDocument },
+      ].map(async ({ key, fallbackTitle, files }) => {
+        if (files && Array.isArray(files)) {
+          for (const file of files) {
+            await attachDocumentToAppraisal(
+              agentboxListingId,
+              file.url,
+              file.filename ? fallbackTitle + '__' + file.filename : fallbackTitle,
+              log,
+              key
+            );
+          }
+        }
+      })
+    );
+
+    return { status: 'synced', listingId: agentboxListingId };
+  } catch (err: any) {
+    err.location = { service: 'SyncService', method: 'syncListingDocuments' };
+    err.meta = { listingId };
+    throw err;
+  }
+}
+
 const SyncService = {
   syncAppraisal,
+  syncListingDocuments,
 };
 
 export default SyncService;
